@@ -2,6 +2,8 @@ package routes
 
 import (
 	login "domjesus/go-with-docker/controllers"
+	"domjesus/go-with-docker/middlewares"
+	"domjesus/go-with-docker/views"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -20,8 +22,8 @@ func InitializeRoute() {
 
 	Router.HandleFunc("/signup", login.SignUp).Methods("POST")
 	Router.HandleFunc("/signin", login.SignIn).Methods("POST")
-	// router.HandleFunc("/admin", IsAuthorized(AdminIndex)).Methods("GET")
-	// router.HandleFunc("/user", IsAuthorized(UserIndex)).Methods("GET")
+	Router.HandleFunc("/admin", middlewares.IsAuthorized(views.AdminIndex)).Methods("GET")
+	Router.HandleFunc("/user", middlewares.IsAuthorized(views.UserIndex)).Methods("GET")
 	Router.HandleFunc("/", Index).Methods("GET")
 	Router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "")
