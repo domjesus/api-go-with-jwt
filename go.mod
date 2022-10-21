@@ -34,4 +34,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 )
 
-require github.com/felixge/httpsnoop v1.0.1 // indirect
+require (
+	github.com/felixge/httpsnoop v1.0.1 // indirect
+	gopkg.in/validator.v2 v2.0.1
+)

@@ -22,6 +22,7 @@ type Authentication struct {
 type Token struct {
 	Role        string `json:"role"`
 	Email       string `json:"email"`
+	Name       	string `json:"name"`
 	TokenString string `json:"token"`
 }
 
@@ -29,6 +30,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 
 	connection, _ := database.ConectaComBancoDeDados()
 	// defer Closedatabase(connection)
+	defer database.Closedatabase(connection)
 
 	var authdetails Authentication
 	err := json.NewDecoder(r.Body).Decode(&authdetails)
@@ -46,7 +48,8 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		var err errors.Error
 		err = errors.SetError(err, "Username or Password is incorrect")
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(err)
+		// json.NewEncoder(w).Encode(err)
+		http.Error(w, "Invalid credentials", 401)
 		return
 	}
 
@@ -56,11 +59,12 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		var err errors.Error
 		err = errors.SetError(err, "Username or Password is incorrect")
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(err)
+		// json.NewEncoder(w).Encode(err)
+		http.Error(w, "Invalid credentials", 401)
 		return
 	}
 
-	validToken, err := GenerateJWT(authuser.Email, authuser.Role)
+	validToken, err := GenerateJWT(authuser.Email, authuser.Role, authuser.Name)
 	if err != nil {
 		var err errors.Error
 		err = errors.SetError(err, "Failed to generate token")
@@ -71,10 +75,13 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 
 	var token Token
 	token.Email = authuser.Email
+	token.Name = authuser.Name
 	token.Role = authuser.Role
 	token.TokenString = validToken
 	w.Header().Set("Content-Type", "application/json")
+	// database.Closedatabase(connection)
 	json.NewEncoder(w).Encode(token)
+	return
 }
 
 func CheckPasswordHash(password, hash string) bool {
@@ -82,7 +89,7 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func GenerateJWT(email, role string) (string, error) {
+func GenerateJWT(email, role string, name string) (string, error) {
 	secretkey := os.Getenv("JWT_SECRET")
 
 	var mySigningKey = []byte(secretkey)
@@ -91,10 +98,11 @@ func GenerateJWT(email, role string) (string, error) {
 
 	claims["authorized"] = true
 	claims["email"] = email
+	claims["name"] = name
 	claims["role"] = role
 	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
 
-	fmt.Println("Token data: ", claims)
+	// fmt.Println("Token data: ", claims)
 
 	tokenString, err := token.SignedString(mySigningKey)
 
@@ -107,7 +115,9 @@ func GenerateJWT(email, role string) (string, error) {
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	connection, _ := database.ConectaComBancoDeDados()
+
 	// defer CloseDatabase(connection)
+	defer database.Closedatabase(connection)
 
 	var user models.User
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -115,7 +125,20 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		var err errors.Error
 		err = errors.SetError(err, "Error in reading payload.")
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(err)
+		// json.NewEncoder(w).Encode(err)
+
+		http.Error(w, "Error in reading payload.", 400)
+		return
+	}
+
+	if err := models.ValidaUser(&user); err != nil {
+		http.Error(w, err.Error(), 422)
+		return
+	}
+
+	
+	if err := models.ValidaEmail(user.Email); err != nil {
+		http.Error(w, err.Error(), 422)
 		return
 	}
 
@@ -127,7 +150,9 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		var err errors.Error
 		err = errors.SetError(err, "Email already in use")
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(err)
+		http.Error(w, "Email already in use", 400)
+
+		// json.NewEncoder(w).Encode(err)
 		return
 	}
 
@@ -137,10 +162,13 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		os.Exit(0)
 	}
 
-	//insert user details in database
+	//insert user details indatabase
 	connection.Create(&user)
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "aplication/json")
+
+	database.Closedatabase(connection)
 	json.NewEncoder(w).Encode(user)
+	return
 }
 
 func GeneratehashPassword(password string) (string, error) {

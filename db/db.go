@@ -16,6 +16,7 @@ var (
 )
 
 func ConectaComBancoDeDados() (*gorm.DB, error) {
+	// fmt.Println("Starting connect to DB")
 
 	// stringDeConexao := os.Getenv("DATABASE_URL")
 	err := godotenv.Load()
@@ -46,19 +47,22 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	DB.AutoMigrate(&models.Users)
-
 	fmt.Println("DB connected")
+	DB.AutoMigrate(&models.User{}, &models.Book{})
+	// DB.Migrator().CreateTable(&models.User{})
+	// DB.Migrator().CreateTable(&models.Book{})
+
 	// l.Info("DB connected")
 
 	return DB, nil
 }
 
-// func Closedatabase(connection *gorm.DB) {
-// logger, _ := zap.NewProduction()
-// defer logger.Sync() // flushes buffer, if any
-// sugar := logger.Sugar()
+func Closedatabase(connection *gorm.DB) {
+	// logger, _ := zap.NewProduction()
+	// defer logger.Sync() // flushes buffer, if any
+	// sugar := logger.Sugar()
 
-// sqldb := *gorm.DB
-// sqldb.Close()
-// }
+	conn, _ := connection.DB()
+	fmt.Println("Closing connection...")
+	conn.Close()
+}

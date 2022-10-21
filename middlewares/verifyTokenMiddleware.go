@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"domjesus/go-with-docker/errors"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -15,16 +14,17 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 
 		// fmt.Println("Header: ", r.Header)
 
-		if r.Header["Token"] == nil {
+		if r.Header["Authorization"] == nil {
 			var err errors.Error
 			err = errors.SetError(err, "No Token Found")
-			json.NewEncoder(w).Encode(err)
+			// json.NewEncoder(w).Encode(err)
+			http.Error(w, "No token Found", 401)
 			return
 		}
 
 		var mySigningKey = []byte(os.Getenv("JWT_SECRET"))
 
-		token, err := jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.Parse(r.Header["Authorization"][0], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("There was an error in parsing")
 			}
