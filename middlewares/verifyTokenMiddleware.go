@@ -12,7 +12,7 @@ import (
 func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		// fmt.Println("Header: ", r.Header)
+		// fmt.Println("Header: ", r.Header["Authorization"])
 
 		if r.Header["Authorization"] == nil {
 			var err errors.Error
@@ -60,7 +60,7 @@ func IsAuthorized(handler http.HandlerFunc) http.HandlerFunc {
 
 		var reserr errors.Error
 		reserr = errors.SetError(reserr, "Not Authorized. Not Rules.")
-		http.Error(w, "Forbiden", http.StatusForbidden)
+		http.Error(w, reserr.Message, http.StatusForbidden)
 		// json.NewEncoder(w).Encode(err)
 	}
 }

@@ -2,7 +2,9 @@ package routes
 
 import (
 	"domjesus/go-with-docker/controllers"
+	location "domjesus/go-with-docker/controllers"
 	login "domjesus/go-with-docker/controllers"
+	trash "domjesus/go-with-docker/controllers"
 	"domjesus/go-with-docker/middlewares"
 	"domjesus/go-with-docker/views"
 	"net/http"
@@ -23,9 +25,19 @@ func InitializeRoute() {
 
 	Router.HandleFunc("/signup", login.SignUp).Methods("POST")
 	Router.HandleFunc("/signin", login.SignIn).Methods("POST")
+
+	Router.HandleFunc("/location", middlewares.IsAuthorized(location.Create)).Methods("POST")
+	Router.HandleFunc("/locations", middlewares.IsAuthorized(location.GetAll)).Methods("GET")
+	Router.Path("/location/{id}").HandlerFunc(middlewares.IsAuthorized(location.GetLocationById)).Methods("GET")
+	Router.HandleFunc("/my_locations", middlewares.IsAuthorized(location.GetMyLocations)).Methods("GET")
+
+	Router.HandleFunc("/trash", middlewares.IsAuthorized(trash.TrashCreate)).Methods("POST")
+	Router.HandleFunc("/trash", middlewares.IsAuthorized(trash.TrashGetAll)).Methods("GET")
+
 	Router.HandleFunc("/admin", middlewares.IsAuthorized(views.AdminIndex)).Methods("GET")
 	Router.HandleFunc("/user", middlewares.IsAuthorized(views.UserIndex)).Methods("GET")
 	Router.HandleFunc("/book", controllers.BookCreate).Methods("POST")
+	Router.HandleFunc("/books_mobile", controllers.ListAllBooks).Methods("GET")
 	Router.HandleFunc("/books", middlewares.IsAuthorized(controllers.ListAllBooks)).Methods("GET")
 	Router.Path("/books/{id}").HandlerFunc(middlewares.IsAuthorized(controllers.GetBookById)).Methods("GET")
 	Router.HandleFunc("/", Index).Methods("GET")

@@ -48,8 +48,12 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 	}
 
 	fmt.Println("DB connected")
-	DB.AutoMigrate(&models.User{}, &models.Book{})
-	// DB.Migrator().CreateTable(&models.User{})
+	DB.AutoMigrate(&models.Book{})
+	DB.AutoMigrate(&models.User{})
+	DB.AutoMigrate(&models.Location{})
+	DB.AutoMigrate(&models.Trash{})
+	// , &models.Book{})
+	// DB.Migrator().CreateTable(&models.Author{})
 	// DB.Migrator().CreateTable(&models.Book{})
 
 	// l.Info("DB connected")

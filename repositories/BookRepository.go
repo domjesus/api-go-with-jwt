@@ -23,5 +23,4 @@ func GetBookById(id int) models.Book {
 	defer database.Closedatabase(connection)
 	connection.First(&book, id)
 	return book
-
 }

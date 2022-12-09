@@ -20,9 +20,10 @@ type Authentication struct {
 }
 
 type Token struct {
+	Id          uint   `json:"id"`
 	Role        string `json:"role"`
 	Email       string `json:"email"`
-	Name       	string `json:"name"`
+	Name        string `json:"name"`
 	TokenString string `json:"token"`
 }
 
@@ -64,7 +65,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validToken, err := GenerateJWT(authuser.Email, authuser.Role, authuser.Name)
+	validToken, err := GenerateJWT(authuser.ID, authuser.Email, authuser.Role, authuser.Name)
 	if err != nil {
 		var err errors.Error
 		err = errors.SetError(err, "Failed to generate token")
@@ -74,6 +75,7 @@ func SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var token Token
+	token.Id = authuser.ID
 	token.Email = authuser.Email
 	token.Name = authuser.Name
 	token.Role = authuser.Role
@@ -89,7 +91,7 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func GenerateJWT(email, role string, name string) (string, error) {
+func GenerateJWT(id uint, email, role string, name string) (string, error) {
 	secretkey := os.Getenv("JWT_SECRET")
 
 	var mySigningKey = []byte(secretkey)
@@ -97,6 +99,7 @@ func GenerateJWT(email, role string, name string) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 
 	claims["authorized"] = true
+	claims["id"] = id
 	claims["email"] = email
 	claims["name"] = name
 	claims["role"] = role
@@ -123,22 +126,35 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		var err errors.Error
-		err = errors.SetError(err, "Error in reading payload.")
+		err = errors.SetError(err, "Error in reading payload. Possible malformed request body")
 		w.Header().Set("Content-Type", "application/json")
 		// json.NewEncoder(w).Encode(err)
 
-		http.Error(w, "Error in reading payload.", 400)
+		http.Error(w, err.Message, 400)
 		return
 	}
+
+	// if user.password != user.password_confirm {
+	// 	var err errors.Error
+	// 	err = errors.SetError(err, "Passwords not matches.")
+	// 	w.Header().Set("Content-Type", "application/json")
+
+	// 	http.Error(w, "Error in reading payload.", 403)
+	// 	return
+	// }
 
 	if err := models.ValidaUser(&user); err != nil {
 		http.Error(w, err.Error(), 422)
 		return
 	}
 
-	
 	if err := models.ValidaEmail(user.Email); err != nil {
-		http.Error(w, err.Error(), 422)
+		http.Error(w, err.Error(), 400)
+		return
+	}
+
+	if err := models.ValidaPasswords(user.Password, user.Password_confirm); err != nil {
+		http.Error(w, err.Error(), 400)
 		return
 	}
 
@@ -165,6 +181,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	//insert user details indatabase
 	connection.Create(&user)
 	w.Header().Set("Content-Type", "aplication/json")
+	user.Password_confirm = ""
 
 	database.Closedatabase(connection)
 	json.NewEncoder(w).Encode(user)

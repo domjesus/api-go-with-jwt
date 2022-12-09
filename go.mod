@@ -7,14 +7,11 @@ require github.com/golang-jwt/jwt v3.2.2+incompatible
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/lib/pq v1.10.7 // indirect
-	go.uber.org/zap v1.23.0
 )
 
 require (
 	github.com/gorilla/mux v1.8.0
 	github.com/joho/godotenv v1.4.0
-	go.uber.org/atomic v1.7.0 // indirect
-	go.uber.org/multierr v1.6.0 // indirect
 	golang.org/x/crypto v0.0.0-20221012134737-56aed061732a
 	gorm.io/driver/postgres v1.4.4
 	gorm.io/gorm v1.23.7
@@ -36,5 +33,6 @@ require (
 
 require (
 	github.com/felixge/httpsnoop v1.0.1 // indirect
+	github.com/shopspring/decimal v1.2.0
 	gopkg.in/validator.v2 v2.0.1
 )

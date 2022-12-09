@@ -8,7 +8,8 @@ import (
 type Book struct {
 	gorm.Model
 	Title       string `validate:"nonzero" json:"title"`
-	Author      string `json:"author"`
+	Author      Author `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	AuthorID    int
 	YearPublish string `json:"year_publish"`
 	ISBN        string `json:"isbn"`
 }
