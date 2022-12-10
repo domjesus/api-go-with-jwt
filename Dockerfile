@@ -26,4 +26,4 @@ WORKDIR /app
 RUN useradd -m heroku
 USER heroku
 EXPOSE 80
-CMD /app/bin/api-go-gin
+CMD go run /app/main.go

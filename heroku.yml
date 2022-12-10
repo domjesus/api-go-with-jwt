@@ -5,4 +5,4 @@ build:
     - go
 
 run:
-  web: api-go-gin
+  web: api-go
