@@ -1,7 +1,6 @@
 package database
 
 import (
-	"domjesus/go-with-docker/models"
 	"fmt"
 	"os"
 
