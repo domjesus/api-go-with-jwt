@@ -1,1 +1,1 @@
-web: /app/api-go
+web: /api-go
