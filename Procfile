@@ -1,1 +1,1 @@
-web: /api-go
+web: /app/main.go
