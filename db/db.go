@@ -6,7 +6,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
+
 	"gorm.io/gorm"
 )
 
@@ -22,10 +23,10 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
 		// l.Error("Error loading .env file")
-		fmt.Println("ERror loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
-	sslmode := " sslmode=disable"
+	// sslmode := " sslmode=disable"
 
 	// env := os.Getenv("ENV")
 
@@ -35,14 +36,15 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 	// sslmode = "sslmode=require"
 	// }
 
-	var stringDeConexao string
+	// var stringDeConexao string
 	// fmt.Println("Ambiente: ", env)
 
-	stringDeConexao = "host=" + os.Getenv("DATABASE_HOST") + " user=" + os.Getenv("DATABASE_USER") + " password=" + os.Getenv("DATABASE_PASSWORD") + " dbname=" + os.Getenv("DATABASE_NAME") + " port=" + os.Getenv("DATABASE_PORT") + sslmode
+	stringDeConexao := os.Getenv("DATABASE_USER") + ":" + os.Getenv("DATABASE_PASSWORD") + "@tcp(" + os.Getenv("DATABASE_HOST") + ":3306)/" + os.Getenv("DATABASE_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
+	// stringDeConexao = "host=" + os.Getenv("DATABASE_HOST") + " user=" + os.Getenv("DATABASE_USER") + " password=" + os.Getenv("DATABASE_PASSWORD") + " dbname=" + os.Getenv("DATABASE_NAME") + " port=" + os.Getenv("DATABASE_PORT") + sslmode
 
-	// fmt.Println("STring de conexao: ", stringDeConexao)
+	// fmt.Println("String de conexao: ", stringDeConexao)
 
-	DB, err = gorm.Open(postgres.Open(stringDeConexao))
+	DB, err = gorm.Open(mysql.Open(stringDeConexao), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
