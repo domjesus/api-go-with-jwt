@@ -27,4 +27,4 @@ WORKDIR /app
 RUN useradd -m heroku
 USER heroku
 EXPOSE 80
-CMD /app/
+CMD /app/bin/go-with-docker

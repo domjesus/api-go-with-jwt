@@ -1,1 +1,1 @@
-web: /app/main.go
+web: /go-with-docker
