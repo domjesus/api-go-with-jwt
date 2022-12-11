@@ -13,7 +13,7 @@ type User struct {
 	gorm.Model
 	Name             string `validate:"nonzero" creating:"nonzero" json:"name"`
 	Email            string `validate:"nonzero" creating:"nonzero" gorm:"unique" json:"email"`
-	Password         string `validate:"passwords_matches" creating:"nonzero" json:"-"`
+	Password         string `creating:"nonzero" json:"-"`
 	Password_confirm string `gorm:"-" gorm:"-:migration" json:"-"`
 	Role             string `json:"role"`
 }

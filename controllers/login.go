@@ -12,7 +12,6 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
-	"gopkg.in/validator.v2"
 )
 
 type Authentication struct {
@@ -135,14 +134,14 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if user.password != user.password_confirm {
-	// 	var err errors.Error
-	// 	err = errors.SetError(err, "Passwords not matches.")
-	// 	w.Header().Set("Content-Type", "application/json")
+	if user.Password != user.Password_confirm {
+		var err errors.Error
+		err = errors.SetError(err, "Passwords not matches.")
+		w.Header().Set("Content-Type", "application/json")
 
-	// 	http.Error(w, "Error in reading payload.", 403)
-	// 	return
-	// }
+		http.Error(w, err.Message, 403)
+		return
+	}
 
 	if err := models.ValidaUser(&user); err != nil {
 		http.Error(w, err.Error(), 422)
@@ -154,7 +153,6 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	validator.SetValidationFunc("passwords_matches", models.ValidaPasswords)
 	if err := models.ValidaPasswords(user.Password, user.Password_confirm); err != nil {
 		http.Error(w, err.Error(), 400)
 		return
