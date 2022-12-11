@@ -1,4 +1,4 @@
-module github.com/domjesus/go-with-docker
+module domjesus/go-with-docker
 
 go 1.17
 
