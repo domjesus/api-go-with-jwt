@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	database "domjesus/go-with-docker/db"
 	"domjesus/go-with-docker/routes"
@@ -67,10 +68,11 @@ func main() {
 // }
 
 func ServerStart() {
+	port := os.Getenv("PORT")
 
 	fmt.Println("Server started at http://localhost:8080")
 
-	err := http.ListenAndServe(":", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Access-Control-Allow-Origin", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(routes.Router))
+	err := http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Access-Control-Allow-Origin", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(routes.Router))
 	if err != nil {
 		log.Fatal(err)
 	}
