@@ -12,6 +12,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
+	"gopkg.in/validator.v2"
 )
 
 type Authentication struct {
@@ -153,6 +154,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	validator.SetValidationFunc("passwords_matches", models.ValidaPasswords)
 	if err := models.ValidaPasswords(user.Password, user.Password_confirm); err != nil {
 		http.Error(w, err.Error(), 400)
 		return
