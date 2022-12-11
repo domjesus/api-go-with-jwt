@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
 	database "domjesus/go-with-docker/db"
 	"domjesus/go-with-docker/routes"
