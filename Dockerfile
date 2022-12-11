@@ -4,7 +4,6 @@ FROM heroku/heroku:20-build as build
 # FROM go_app as base
 
 COPY . /app
-
 WORKDIR /app
 
 # RUN go build -o /main
@@ -21,10 +20,9 @@ RUN STACK=heroku-20 /tmp/buildpack/heroku/go/bin/compile /app /tmp/build_cache /
 # Prepare final, minimal image
 FROM heroku/heroku:20
 
-COPY --from=build ./ /app
+COPY --from=build ./app /app
 ENV HOME /app
 WORKDIR /app
 RUN useradd -m heroku
 USER heroku
-EXPOSE 80
 CMD /app/bin/go-with-docker

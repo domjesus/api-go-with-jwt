@@ -1,1 +1,1 @@
-web: bin/go-with-docker
+web: go-with-docker
