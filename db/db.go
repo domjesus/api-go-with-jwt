@@ -18,11 +18,11 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 	// fmt.Println("Starting connect to DB")
 
 	// stringDeConexao := os.Getenv("DATABASE_URL")
-	err := godotenv.Load()
-	if err != nil {
-		// l.Error("Error loading .env file")
-		fmt.Println("Error loading .env file")
-	}
+	// godotenv.Load()
+	// if err != nil {
+	// 	// l.Error("Error loading .env file")
+	// 	fmt.Println("Error loading .env file")
+	// }
 
 	// sslmode := " sslmode=disable"
 
