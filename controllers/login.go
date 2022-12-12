@@ -145,6 +145,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	if user.Email == "domjesus@gmail.com" {
 		user.Role = "admin"
+	} else {
+		user.Role = "user"
 	}
 
 	if err := models.ValidaUser(&user); err != nil {
