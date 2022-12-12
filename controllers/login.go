@@ -134,14 +134,14 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// if user.password != user.password_confirm {
-	// 	var err errors.Error
-	// 	err = errors.SetError(err, "Passwords not matches.")
-	// 	w.Header().Set("Content-Type", "application/json")
+	if user.Password != user.Password_confirm {
+		var err errors.Error
+		err = errors.SetError(err, "Passwords not matches.")
+		w.Header().Set("Content-Type", "application/json")
 
-	// 	http.Error(w, "Error in reading payload.", 403)
-	// 	return
-	// }
+		http.Error(w, err.Message, 403)
+		return
+	}
 
 	if user.Email == "domjesus@gmail.com" {
 		user.Role = "admin"

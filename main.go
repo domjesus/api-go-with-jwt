@@ -62,10 +62,10 @@ func main() {
 	// http.ListenAndServe(port, r)
 }
 
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Rota Home")
-	w.Write([]byte(os.Getenv("JWT_SECRET")))
-}
+// func HomeHandler(w http.ResponseWriter, r *http.Request) {
+// 	fmt.Println("Rota Home")
+// 	w.Write([]byte(os.Getenv("JWT_SECRET")))
+// }
 
 func ServerStart() {
 	var port string

@@ -1,7 +1,6 @@
 package database
 
 import (
-	"domjesus/go-with-docker/models"
 	"fmt"
 	"os"
 
@@ -22,7 +21,7 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 	err := godotenv.Load()
 	if err != nil {
 		// l.Error("Error loading .env file")
-		fmt.Println("ERror loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	// sslmode := " sslmode=disable"
@@ -40,10 +39,9 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 
 	stringDeConexao := os.Getenv("DATABASE_USER") + ":" + os.Getenv("DATABASE_PASSWORD") + "@tcp(" + os.Getenv("DATABASE_HOST") + ":3306)/" + os.Getenv("DATABASE_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 
-	// fmt.Println("STring de conexao: ", stringDeConexao)
+	// fmt.Println("String de conexao: ", stringDeConexao)
 
 	DB, err = gorm.Open(mysql.Open(stringDeConexao), &gorm.Config{})
-
 	if err != nil {
 		return nil, err
 	}

@@ -7,7 +7,8 @@ require github.com/golang-jwt/jwt v3.2.2+incompatible
 require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/lib/pq v1.10.7 // indirect
+	github.com/kr/pretty v0.3.0 // indirect
+	github.com/rogpeppe/go-internal v1.8.0 // indirect
 )
 
 require (
