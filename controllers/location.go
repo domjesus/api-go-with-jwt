@@ -6,7 +6,6 @@ import (
 	"domjesus/go-with-docker/models"
 	"domjesus/go-with-docker/repositories"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -94,7 +93,7 @@ func GetMyLocations(w http.ResponseWriter, r *http.Request) {
 
 	// }
 
-	fmt.Print("Id do user:", userId)
+	// fmt.Print("Id do user:", userId)
 
 	my_locations := repositories.GetMyLocations(userId.(float64))
 	// print("Locations: ", my_locations)

@@ -68,9 +68,17 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ServerStart() {
-	fmt.Println("Server started at http://localhost:8080")
+	var port string
 
-	err := http.ListenAndServe(":8080", handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Access-Control-Allow-Origin", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(routes.Router))
+	port = os.Getenv("PORT")
+
+	if port == "" {
+		port = "80"
+	}
+
+	fmt.Println("Server started at http://localhost:" + port)
+
+	err := http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Access-Control-Allow-Origin", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(routes.Router))
 	if err != nil {
 		log.Fatal(err)
 	}
