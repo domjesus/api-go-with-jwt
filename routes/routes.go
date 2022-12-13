@@ -10,6 +10,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"go.uber.org/zap"
 )
 
 var (
@@ -21,7 +22,7 @@ func CreateRouter() {
 	Router = mux.NewRouter()
 }
 
-func InitializeRoute() {
+func InitializeRoute(l *zap.SugaredLogger) {
 
 	Router.HandleFunc("/signup", login.SignUp).Methods("POST")
 	Router.HandleFunc("/signin", login.SignIn).Methods("POST")
@@ -46,6 +47,9 @@ func InitializeRoute() {
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Access-Control-Request-Headers, Access-Control-Request-Method, Connection, Host, Origin, User-Agent, Referer, Cache-Control, X-header")
 	})
+
+	l.Info("Routes done")
+
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {

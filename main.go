@@ -5,14 +5,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	database "domjesus/go-with-docker/db"
 	"domjesus/go-with-docker/routes"
 
 	"github.com/gorilla/handlers"
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 )
 
 func main() {
+	logger, _ := zap.NewProduction()
+	defer logger.Sync() // flushes buffer, if any
+	sugar := logger.Sugar()
+	sugar.Infow("failed to fetch URL",
+		// Structured context as loosely typed key-value pairs.
+		"url", "URL-XPTO",
+		"attempt", 3,
+		"backoff", time.Second,
+	)
+	sugar.Infof("Logger working fine ")
+
 	// r := mux.NewRouter()
 	// r.HandleFunc("/", HomeHandler)
 	//RELATION BELONGS TO
@@ -32,7 +46,7 @@ func main() {
 	// 	AuthorID: 4,
 	// }
 
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(sugar)
 	defer database.Closedatabase(connection)
 
 	// connection.Preload("Author").Find(&book) //GET THE MODEL AND RELATION
@@ -44,7 +58,7 @@ func main() {
 	// return
 
 	routes.CreateRouter()
-	routes.InitializeRoute()
+	routes.InitializeRoute(sugar)
 
 	ServerStart()
 	// r.HandleFunc("/home", verifyJWT(handlePage))
@@ -69,6 +83,7 @@ func main() {
 
 func ServerStart() {
 	var port string
+	godotenv.Load()
 
 	port = os.Getenv("PORT")
 

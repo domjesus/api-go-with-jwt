@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
+	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -13,11 +15,11 @@ var (
 	err error
 )
 
-func ConectaComBancoDeDados() (*gorm.DB, error) {
+func ConectaComBancoDeDados(l *zap.SugaredLogger) (*gorm.DB, error) {
 	// fmt.Println("Starting connect to DB")
 
 	// stringDeConexao := os.Getenv("DATABASE_URL")
-	// godotenv.Load()
+	godotenv.Load()
 	// if err != nil {
 	// 	// l.Error("Error loading .env file")
 	// 	fmt.Println("Error loading .env file")
@@ -46,6 +48,11 @@ func ConectaComBancoDeDados() (*gorm.DB, error) {
 	}
 
 	fmt.Println("DB connected")
+
+	if l != nil {
+		l.Info("DB connected")
+	}
+
 	// DB.AutoMigrate(&models.Book{})
 	// DB.AutoMigrate(&models.User{})
 	// DB.AutoMigrate(&models.Location{})

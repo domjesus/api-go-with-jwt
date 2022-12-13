@@ -29,7 +29,7 @@ type Token struct {
 
 func SignIn(w http.ResponseWriter, r *http.Request) {
 
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 	// defer Closedatabase(connection)
 	defer database.Closedatabase(connection)
 
@@ -117,7 +117,7 @@ func GenerateJWT(id uint, email, role string, name string) (string, error) {
 }
 
 func SignUp(w http.ResponseWriter, r *http.Request) {
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 
 	// defer CloseDatabase(connection)
 	defer database.Closedatabase(connection)

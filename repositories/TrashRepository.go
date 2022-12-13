@@ -9,7 +9,7 @@ func AllTrashes() []models.Trash {
 
 	var trashes []models.Trash
 
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 	defer database.Closedatabase(connection)
 	// connection.Where("id > ? ", 2).Find(&books)
 	connection.Find(&trashes)

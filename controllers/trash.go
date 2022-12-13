@@ -11,7 +11,7 @@ import (
 )
 
 func TrashCreate(w http.ResponseWriter, r *http.Request) {
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 	defer database.Closedatabase(connection)
 
 	var trash models.Trash

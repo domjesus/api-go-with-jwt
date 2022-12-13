@@ -14,7 +14,7 @@ import (
 )
 
 func Create(w http.ResponseWriter, r *http.Request) {
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 	defer database.Closedatabase(connection)
 
 	// resBody, err1 := ioutil.ReadAll(r.Body)
@@ -47,9 +47,16 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 func GetAll(w http.ResponseWriter, r *http.Request) {
 
-	locations := repositories.AllLocations()
-	locations_json, _ := json.Marshal(locations)
-	w.Write(locations_json)
+	isAdmin := logedUserIsAdmin(r.Header["Authorization"][0])
+
+	if isAdmin {
+		locations := repositories.AllLocations()
+		locations_json, _ := json.Marshal(locations)
+		w.Write(locations_json)
+		return
+	}
+
+	http.Error(w, "Not allowed", http.StatusForbidden)
 
 }
 

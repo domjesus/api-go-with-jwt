@@ -9,7 +9,7 @@ func AllBooks() []models.Book {
 
 	var books []models.Book
 
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 	defer database.Closedatabase(connection)
 	// connection.Where("id > ? ", 2).Find(&books)
 	connection.Find(&books)
@@ -19,7 +19,7 @@ func AllBooks() []models.Book {
 func GetBookById(id int) models.Book {
 	var book models.Book
 
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 	defer database.Closedatabase(connection)
 	connection.First(&book, id)
 	return book

@@ -13,7 +13,7 @@ import (
 )
 
 func BookCreate(w http.ResponseWriter, r *http.Request) {
-	connection, _ := database.ConectaComBancoDeDados()
+	connection, _ := database.ConectaComBancoDeDados(nil)
 
 	var book models.Book
 	err := json.NewDecoder(r.Body).Decode(&book)
