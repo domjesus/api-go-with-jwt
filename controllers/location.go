@@ -6,6 +6,7 @@ import (
 	"domjesus/go-with-docker/models"
 	"domjesus/go-with-docker/repositories"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -45,18 +46,84 @@ func Create(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func GetAll(w http.ResponseWriter, r *http.Request) {
+type location struct {
+	Latitude  string `validate:"nonzero" json:"latitude"`
+	Longitude string `validate:"nonzero" json:"longitude"`
+	User      user
+	Trash     trash
+	Valid     bool
+	Active    bool
+}
 
-	isAdmin := logedUserIsAdmin(r.Header["Authorization"][0])
+func toLocation(locationTmp models.Location) location {
 
-	if isAdmin {
-		locations := repositories.AllLocations()
-		locations_json, _ := json.Marshal(locations)
-		w.Write(locations_json)
-		return
+	var loc location
+
+	loc.Latitude = locationTmp.Latitude
+	loc.Longitude = locationTmp.Longitude
+	loc.Trash = toTrash(locationTmp.Trash)
+	loc.User = toUser(locationTmp.User)
+
+	return loc
+}
+
+func toLocations(locationsTmp []models.Location) []location {
+	var locs []location
+	for _, v := range locationsTmp {
+		locs = append(locs, toLocation(v))
 	}
 
-	http.Error(w, "Not allowed", http.StatusForbidden)
+	return locs
+}
+
+type user struct {
+	Name  string `json:"name"`
+	Email string `json:"email"`
+}
+
+func toUser(userTmp models.User) user {
+	var usr user
+
+	usr.Email = userTmp.Email
+	usr.Name = userTmp.Name
+
+	return usr
+}
+
+type trash struct {
+	Type     string `json:"type"`
+	Name     string `json:"name"`
+	ImageUrl string
+	Active   bool
+}
+
+func toTrash(trashTmp models.Trash) trash {
+	var tra trash
+
+	tra.Name = trashTmp.Name
+	tra.Type = trashTmp.Type
+
+	return tra
+}
+
+func GetAll(w http.ResponseWriter, r *http.Request) {
+
+	// isAdmin := logedUserIsAdmin(r.Header["Authorization"][0])
+
+	// if isAdmin {
+	locations := repositories.AllLocations()
+
+	locations_json, err := json.Marshal(toLocations(locations))
+
+	if err != nil {
+		fmt.Println("Erro recuperando locations.")
+	}
+
+	w.Write(locations_json)
+	return
+	// }
+
+	// http.Error(w, "Not allowed", http.StatusForbidden)
 
 }
 
