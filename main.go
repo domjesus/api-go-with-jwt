@@ -92,22 +92,10 @@ func ServerStart() {
 		port = "8080"
 	}
 
-	fmt.Println("Server started at ", GetOutboundIP().String()+":"+port)
+	fmt.Println("Server started at PORT: " + port)
 
 	err := http.ListenAndServe(":"+port, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Access-Control-Allow-Origin", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(routes.Router))
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func GetOutboundIP() net.IP {
-	conn, err := net.Dial("udp", "8.8.8.8:80")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer conn.Close()
-
-	localAddr := conn.LocalAddr().(*net.UDPAddr)
-
-	return localAddr.IP
 }
