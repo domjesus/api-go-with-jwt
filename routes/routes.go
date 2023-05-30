@@ -4,6 +4,7 @@ import (
 	"domjesus/go-with-docker/controllers"
 	location "domjesus/go-with-docker/controllers"
 	login "domjesus/go-with-docker/controllers"
+	occurrence "domjesus/go-with-docker/controllers"
 	trash "domjesus/go-with-docker/controllers"
 	"domjesus/go-with-docker/middlewares"
 	"domjesus/go-with-docker/views"
@@ -29,11 +30,12 @@ func InitializeRoute(l *zap.SugaredLogger) {
 
 	Router.HandleFunc("/location", middlewares.IsAuthorized(location.Create)).Methods("POST")
 	Router.HandleFunc("/locations", middlewares.IsAuthorized(location.GetAll)).Methods("GET")
+	Router.HandleFunc("/occurrences", middlewares.IsAuthorized(occurrence.GetAllOccurrences)).Methods("GET")
 	Router.Path("/location/{id}").HandlerFunc(middlewares.IsAuthorized(location.GetLocationById)).Methods("GET")
 	Router.HandleFunc("/my_locations", middlewares.IsAuthorized(location.GetMyLocations)).Methods("GET")
 
 	Router.HandleFunc("/trash", middlewares.IsAuthorized(trash.TrashCreate)).Methods("POST")
-	Router.HandleFunc("/trash", middlewares.IsAuthorized(trash.TrashGetAll)).Methods("GET")
+	Router.HandleFunc("/trash", trash.TrashGetAll).Methods("GET")
 
 	Router.HandleFunc("/admin", middlewares.IsAuthorized(views.AdminIndex)).Methods("GET")
 	Router.HandleFunc("/user", middlewares.IsAuthorized(views.UserIndex)).Methods("GET")
@@ -42,6 +44,7 @@ func InitializeRoute(l *zap.SugaredLogger) {
 	Router.HandleFunc("/books", middlewares.IsAuthorized(controllers.ListAllBooks)).Methods("GET")
 	Router.Path("/books/{id}").HandlerFunc(middlewares.IsAuthorized(controllers.GetBookById)).Methods("GET")
 	Router.HandleFunc("/", Index).Methods("GET")
+	Router.HandleFunc("/token", controllers.GetTokenInfo).Methods("GET")
 	Router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Access-Control-Allow-Origin", "localhost:5173")
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
@@ -49,7 +52,6 @@ func InitializeRoute(l *zap.SugaredLogger) {
 	})
 
 	l.Info("Routes done")
-
 }
 
 func Index(w http.ResponseWriter, r *http.Request) {

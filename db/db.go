@@ -47,7 +47,7 @@ func ConectaComBancoDeDados(l *zap.SugaredLogger) (*gorm.DB, error) {
 		return nil, err
 	}
 
-	fmt.Println("DB connected")
+	// fmt.Println("DB connected")
 
 	if l != nil {
 		l.Info("DB connected")
